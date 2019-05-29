@@ -32,7 +32,7 @@ html, body, #app, .box {
 
   .content {
     @include flex();
-    @include rect(100%,auto);
+    @include rect(100%,100%);
     @include overflow();
   }
 

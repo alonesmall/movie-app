@@ -1,6 +1,12 @@
 <template>
     <div class="container">
-      <div class="header">首页的头部</div>
+      <mt-button type="danger">点击回到顶部</mt-button>
+      <mt-header title="电影首页">
+        <router-link to="/" slot="left">
+          <mt-button>Logo</mt-button>
+        </router-link>
+        <mt-button icon="more" slot="right"></mt-button>
+      </mt-header>
       <div class="content">
         <div class="banner">
           <mt-swipe :auto="4000">
@@ -9,7 +15,9 @@
             </mt-swipe-item>
           </mt-swipe>
         </div>
-        <prolist v-bind:prolist="prolist"></prolist>
+        <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore">
+          <prolist v-bind:prolist="prolist"></prolist>
+        </mt-loadmore>
       </div>
     </div>
 </template>
@@ -21,10 +29,52 @@ export default {
   components: {
     'prolist': Prolist
   },
+  methods: {
+    // 下拉时，触发下拉函数，其实就是加载第一页的数据，重新请求
+    loadTop: function () {
+      axios.get('http://www.daxunxun.com/douban')
+        .then(res => {
+          this.pageCode = 1 // 当触发下拉刷新函数时，就是渲染第一页的数据，所以需要充值页码pageCode，以及allLoaded
+          this.allLoaded = false // 数据是否请求完成
+          this.prolist = res.data
+          // 请求数据完成之后需要设置重定位，即更新列表的高度
+          this.$refs.loadmore.onTopLoaded()
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    loadBottom: (function () {
+      let timer = null
+      return function () {
+        let that = this
+        clearTimeout(timer)
+        timer = setTimeout(function () {
+          // 上拉加载更多，其实就是查找第pageCode页码的数据并合并到之前的prolist数组中
+          axios.get(`http://www.daxunxun.com/douban?start=${that.pageCode * 20}&count=20`)
+            .then(res => {
+              if (res.data.length === 0) { // 如果查询的到数组为空，则说明所有数据加载完毕，修改allLoaded的值，让其为true,告诉插件没有数据了
+                that.allLoaded = true
+              } else {
+                that.pageCode++
+                that.prolist = that.prolist.concat(...res.data)
+              }
+              that.$refs.loadmore.onBottomLoaded()
+            })
+            .catch(err => {
+              console.log(err)
+            })
+        }, 1000)
+      }
+    })()
+  },
   data: function () {
     return {
       prolist: [],
-      bannerlist: []
+      bannerlist: [],
+      allLoaded: false,
+      pageCode: 0, // 页码默认显示第一页，从第几页开始查询，所以需要后端给的接口要有start接口从哪里开始查找多少条(count接口)数据
+      btnFlag: ''
     }
   },
   mounted: function () {
@@ -46,13 +96,13 @@ export default {
         console.log(err)
       })
     // 这里是请求电影列表数据
-    axios.get('http://www.daxunxun.com/douban')
-      .then(res => {
-        this.prolist = res.data
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    // axios.get('http://www.daxunxun.com/douban')
+    //   .then(res => {
+    //     this.prolist = res.data
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
   }
 }
 </script>

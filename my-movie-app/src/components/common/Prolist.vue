@@ -1,6 +1,6 @@
 <template>
     <ul class="prolist">
-        <li @click="goDetail(item.id)" v-for="item in prolist" :key="item.id">
+        <li @click="goDetail(item.id)" v-for="item in prolist" :key="item.id" >
             <div class="img">
                 <img :src="item.images.small" :alt="item.alt"/>
             </div>
