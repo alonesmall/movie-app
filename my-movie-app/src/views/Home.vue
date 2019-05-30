@@ -18,7 +18,8 @@
             </mt-swipe-item>
           </mt-swipe>
         </div>
-        <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore">
+        <!-- auto-fill解决轮播图自动向上被遮盖问题 -->
+        <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" :auto-fill="false">
           <prolist v-bind:prolist="prolist"></prolist>
         </mt-loadmore>
       </div>
@@ -63,6 +64,7 @@ export default {
     loadBottom: (function () {
       let timer = null
       return function () {
+        console.log(1)
         let that = this
         clearTimeout(timer)
         timer = setTimeout(function () {
@@ -89,7 +91,7 @@ export default {
       prolist: [],
       bannerlist: [],
       allLoaded: false,
-      pageCode: 0, // 页码默认显示第一页，从第几页开始查询，所以需要后端给的接口要有start接口从哪里开始查找多少条(count接口)数据
+      pageCode: 1, // 页码默认显示第一页，从第几页开始查询，所以需要后端给的接口要有start接口从哪里开始查找多少条(count接口)数据
       btnFlag: '',
       flag: false
     }
@@ -114,13 +116,13 @@ export default {
         console.log(err)
       })
     // 这里是请求电影列表数据
-    // axios.get('http://www.daxunxun.com/douban')
-    //   .then(res => {
-    //     this.prolist = res.data
-    //   })
-    //   .catch(err => {
-    //     console.log(err)
-    //   })
+    axios.get('http://www.daxunxun.com/douban')
+      .then(res => {
+        this.prolist = res.data
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 }
 </script>
