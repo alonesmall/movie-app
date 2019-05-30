@@ -1,13 +1,16 @@
 <template>
     <div class="container">
-      <mt-button type="danger">点击回到顶部</mt-button>
-      <mt-header title="电影首页">
-        <router-link to="/" slot="left">
-          <mt-button>Logo</mt-button>
-        </router-link>
-        <mt-button icon="more" slot="right"></mt-button>
-      </mt-header>
-      <div class="content">
+
+      <van-nav-bar
+        title="首页"
+        left-text="返回"
+        right-text="按钮"
+      >
+        <van-icon name="user-o" slot="left" size="24px"/>
+        <van-icon name="wap-nav" slot="right" size="24px"/>
+      </van-nav-bar>
+
+      <div class="content" id="content">
         <div class="banner">
           <mt-swipe :auto="4000">
             <mt-swipe-item v-for="(item, index) in bannerlist" :key="index">
@@ -18,6 +21,9 @@
         <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore">
           <prolist v-bind:prolist="prolist"></prolist>
         </mt-loadmore>
+      </div>
+      <div class="top" v-show="flag" @click="backToTop">
+        <van-icon name="upgrade" size="40px" color="red"/>
       </div>
     </div>
 </template>
@@ -30,6 +36,16 @@ export default {
     'prolist': Prolist
   },
   methods: {
+    backToTop: function () {
+      document.getElementById('content').scrollTop = 0
+    },
+    scrollTop: function () {
+      if (document.getElementById('content').scrollTop < 400) {
+        this.flag = false
+      } else {
+        this.flag = true
+      }
+    },
     // 下拉时，触发下拉函数，其实就是加载第一页的数据，重新请求
     loadTop: function () {
       axios.get('http://www.daxunxun.com/douban')
@@ -74,10 +90,12 @@ export default {
       bannerlist: [],
       allLoaded: false,
       pageCode: 0, // 页码默认显示第一页，从第几页开始查询，所以需要后端给的接口要有start接口从哪里开始查找多少条(count接口)数据
-      btnFlag: ''
+      btnFlag: '',
+      flag: false
     }
   },
   mounted: function () {
+    document.getElementById('content').addEventListener('scroll', this.scrollTop)
     /**
      * 请求轮播图图片数据
      * 但是得到的数据地址并不是正确的格式
@@ -113,6 +131,24 @@ export default {
   background: skyblue;
   img {
     width: 100%;
+  }
+}
+.top {
+  position:fixed;
+  bottom: 60px;
+  right: 10px;
+  width: 50px;
+  height: 50px;
+  background: rgba($color: #000000, $alpha: 0.5);
+  .van-icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 40px;
+    height: 40px;
   }
 }
 </style>

@@ -15,6 +15,20 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
+      path: '/mylogin',
+      name: 'mylogin',
+      components: {
+        default: () => import('./views/Mylogin.vue')
+      }
+    },
+    {
+      path: '/register',
+      name: 'register',
+      components: {
+        default: () => import('./views/Register.vue')
+      }
+    },
+    {
       path: '/detail/:id',
       name: 'detail',
       components: {
