@@ -145,7 +145,7 @@ export default {
           } else {
             Toast('注册成功')
             // 注册成功之后，在本地存储登录状态信息
-            localStorage.setItem('isLogin', 'ok')
+            this.$store.commit('changeLoginState', 'ok')
             // 注册成功之后默认登录状态，跳转到首页
             this.$router.push('/')
           }

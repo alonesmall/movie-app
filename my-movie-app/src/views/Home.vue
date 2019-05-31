@@ -23,6 +23,7 @@
           <prolist v-bind:prolist="prolist"></prolist>
         </mt-loadmore>
       </div>
+
       <div class="top" v-show="flag" @click="backToTop">
         <van-icon name="upgrade" size="40px" color="red"/>
       </div>
@@ -35,6 +36,20 @@ import Prolist from '@/components/common/Prolist'
 export default {
   components: {
     'prolist': Prolist
+  },
+  beforeRouteLeave (to, from, next) {
+    // 离开此路由时，获取当前滚动条滚动距离，并存储在localStorage中(本地存储、状态管理器)
+    let position = document.getElementById('content').scrollTop
+    localStorage.setItem('position', position)
+    document.getElementById('content').removeEventListener('scroll', this.scrollTop)
+    next()
+  },
+  watch: {
+    $route (newVal) {
+      if (newVal.name === 'home') {
+        document.getElementById('content').scrollTop = localStorage.getItem('position')
+      }
+    }
   },
   methods: {
     backToTop: function () {
@@ -64,7 +79,6 @@ export default {
     loadBottom: (function () {
       let timer = null
       return function () {
-        console.log(1)
         let that = this
         clearTimeout(timer)
         timer = setTimeout(function () {

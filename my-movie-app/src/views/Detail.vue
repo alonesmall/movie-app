@@ -1,7 +1,11 @@
 <template>
 <div class="box">
   <div class="container">
-    <div class="header">详情头部</div>
+    <van-nav-bar
+      title="详情"
+      left-arrow
+      @click-left="back"
+    />
     <div class="content">{{ title }}</div>
   </div>
   <footer class="footer">
@@ -21,11 +25,15 @@ export default {
   mounted () {
     // 获取路由传过来的参数
     let { id } = this.$route.params
-    console.log(this.$route)
     axios.get(`http://www.daxunxun.com/detail?id=${id}`)
       .then(res => {
         this.title = res.data[0].title
       })
+  },
+  methods: {
+    back () {
+      this.$router.go(-1)
+    }
   }
 }
 </script>

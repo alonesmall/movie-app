@@ -45,7 +45,8 @@ export default new Router({
       components: {
         default: Home,
         footer: Footer
-      }
+      },
+      meta: { keepAlive: true }
     },
     {
       path: '/kind',

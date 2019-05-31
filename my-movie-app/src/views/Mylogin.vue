@@ -1,6 +1,10 @@
 <template>
   <div class="container">
-    <div class="header">登录页面</div>
+    <van-nav-bar
+      title="登录"
+      left-arrow
+      @click-left="back"
+    />
     <div class="content">
       <van-cell-group>
         <van-field
@@ -42,6 +46,9 @@ export default {
     }
   },
   methods: {
+    back () {
+      this.$router.push('/')
+    },
     login: function () {
       if (this.username === '') {
         Toast('用户名不能为空')
@@ -73,6 +80,7 @@ export default {
             return
           }
           if (res.data === 1) {
+            this.$store.commit('changeLoginState', 'ok')
             this.$router.push('/')
           }
         })

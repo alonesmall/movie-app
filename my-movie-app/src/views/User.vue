@@ -9,11 +9,21 @@
 
 <script>
 export default {
-  mounted: function () {
-    if (localStorage.getItem('userId') === '1') {
-      this.$router.push('/user.login')
-    } else {
-      this.$router.push('/user/nologin')
+  beforeRouteEnter: (to, from, next) => {
+    next(vm => {
+      if (vm.$store.state.loginState === 'ok') {
+        vm.$router.push('/user/login')
+      } else {
+        vm.$router.push('/user/nologin')
+      }
+    })
+  },
+  beforeRouteUpdate: function (to, from, next) {
+    if (to.path === '/user/nologin') {
+      next()
+    }
+    if (to.path === '/user/login') {
+      next()
     }
   }
 }

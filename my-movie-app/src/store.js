@@ -6,9 +6,13 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
 
+    loginState: ''
+
   },
   mutations: {
-
+    changeLoginState (state, data) {
+      state.loginState = data
+    }
   },
   actions: {
 
